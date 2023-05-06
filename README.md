@@ -2,8 +2,8 @@
   
 <img src="https://i.imgur.com/kdicZUs.jpg" /></a>
 
-### Description:
-#### Welcome to HealthHive! This is a social network that focuses on promoting overall health and wellness, such as healthy eating, exercise, and mental health. This could allow users to connect with others who share their interest in living a healthy lifestyle, share tips and advice, and support each other in achieving their goals.
+## Description:
+### Welcome to HealthHive! This is a social network that focuses on promoting overall health and wellness, such as healthy eating, exercise, and mental health. This could allow users to connect with others who share their interest in living a healthy lifestyle, share tips and advice, and support each other in achieving their goals.
 
 # Technologies Used:
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
