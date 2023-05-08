@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
-from .models import Post
+from .models import Post, Profile
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth.models import User
 # Create your views here.
 
 # Define the home view
@@ -15,6 +15,13 @@ def home(request):
 
 def about(request):
     return render(request, 'about.html')
+
+def profile_index(request):
+    profile = Profile.objects.filter(user=request.user)
+    print(profile)
+    return render(request, 'profile/profile.html', {
+       'profile': profile
+    })
 
 @login_required
 def posts_index(request):

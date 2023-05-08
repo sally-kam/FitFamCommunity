@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>My Profile</h1>
+{% if profile %}
+    <p>Name: {{ profile.user }}</p>
+    <p>Email: {{ profile.email }}</p>
+    <p>Date of Birth: {{ profile.date_of_birth }}</p>
+{% else %}
+    <p>No profile found.</p>
+{% endif %}
+
+
+  {% endblock %}
