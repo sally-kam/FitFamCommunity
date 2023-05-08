@@ -28,6 +28,8 @@ class Profile(models.Model):
         unique=True,
     )
     date_of_birth = models.DateField()
+    first_name = models.CharField(max_length=30, blank=True)
+    last_name = models.CharField(max_length=30, blank=True)
 
     def __str__(self):
-        return self.email
+        return f"{self.first_name} {self.last_name}"

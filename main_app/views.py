@@ -16,6 +16,7 @@ def home(request):
 def about(request):
     return render(request, 'about.html')
 
+@login_required
 def profile_index(request):
     profile = Profile.objects.filter(user=request.user)
     print(profile)
@@ -49,3 +50,6 @@ def signup(request):
   context = {'form': form, 'error_message': error_message}
   return render(request, 'registration/signup.html', context)
 
+def posts_detail(request, post_id):
+  post = Post.objects.get(id=post_id)
+  return render(request, 'posts/detail.html', { 'post': post })
