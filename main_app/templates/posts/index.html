@@ -2,7 +2,13 @@
 {% block content %}
 
 <h1>NewsFeed</h1>
-<li><a href="{% url 'posts_create' %}">Create a post</a></li>
+
+<a  href="{% url 'posts_create' %}" class=" input-group ">
+  <input  type="search" class="form-control rounded " placeholder="Create a post" aria-label="Search" aria-describedby="search-addon" />
+</a>
+</div>
+
+
 {% for post in posts %}
   <a href="{% url 'posts_detail' post.id %}">
     <div class="card">

@@ -2,9 +2,11 @@
 {% block content %}
 <h1>My Profile</h1>
 {% if profile %}
-    <p>Name: {{ profile.user.email }}</p>
-    <p>Email: {{ profile.email }}</p>
-    <p>Date of Birth: {{ profile.date_of_birth }}</p>
+    <p>Username: {{ user.profile.user }}</p>
+    <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+    <p>Email: {{ user.email }}</p>
+    <p>Date of Birth: {{ user.profile.date_of_birth }}</p>
+    <p>Bio: {{ user.profile.bio }}</p>
 {% else %}
     <p>No profile found.</p>
 {% endif %}

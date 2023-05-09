@@ -3,18 +3,42 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 from django.urls import reverse
+from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 
 # Create your models here.
-# class User(models.Model):
-#     name = models.CharField(max_length=20)
-#     email = models.CharField(ma)
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    date_of_birth = models.DateField(blank=True, null=True)
+    bio = models.TextField(max_length=1000, blank=True)
+
+    def __str__(self):
+        return f"{self.user} "
+    
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
+    
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.CharField(max_length=1000)
-    date = models.DateTimeField(default=datetime.now, blank=True)
+    date = models.DateTimeField(default=timezone.now, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    
+    comments = models.ManyToManyField('Comment', blank=True)
+    likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+
     def __str__(self):
         return f"{self.title} posted on {self.date}"
     
@@ -24,13 +48,11 @@ class Post(models.Model):
         ordering = ['-date']
 
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    email = models.EmailField(verbose_name='email address', max_length=255, unique=True)
-    date_of_birth = models.DateField()
-    first_name = models.CharField(max_length=30, blank=True)
-    last_name = models.CharField(max_length=30, blank=True)
-    bio = models.CharField(max_length=1000)
+class Comment(models.Model):
+    text = models.CharField(max_length=1000)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateTimeField(default=timezone.now, blank=True)
+    likes = models.ManyToManyField(User, related_name='liked_comments', blank=True)
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.text} by {self.user.username} on {self.date}"

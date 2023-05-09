@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
-
+from main_app.views import SignUp
 urlpatterns = [
     path('', views.home, name='home'),
     path('about/', views.about, name='about'),
@@ -11,7 +11,7 @@ urlpatterns = [
     path('posts/<int:pk>/update/', views.PostUpdate.as_view(), name='posts_update'),
     path('posts/<int:pk>/delete/', views.PostDelete.as_view(), name='posts_delete'),
     path('profile/', views.profile_index, name='profile_index'),
-    path('accounts/signup/', views.signup, name='signup'),
+    path('signup/', SignUp.as_view(), name='signup'),
     path('posts/<int:post_id>/', views.posts_detail, name='posts_detail'),
 ]
 

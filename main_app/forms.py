@@ -12,12 +12,19 @@ class SignUpForm(UserCreationForm):
     email = forms.EmailField(max_length=254, required=True, help_text='Required. Enter a valid email address.')
     first_name = forms.CharField(max_length=30, required=True, help_text='Required.')
     last_name = forms.CharField(max_length=30, required=True, help_text='Required.')
-    date_of_birth = forms.DateField(widget=DatePickerInput())
+    date_of_birth = forms.DateField(widget=DatePickerInput(), required=True)
+    bio = forms.CharField(max_length=5000, required=True, widget=Textarea(attrs={'rows': 8, 'cols': 80}))
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'date_of_birth')
-    
+        fields = [
+            'username', 
+            'first_name', 
+            'last_name', 
+            'email', 
+            'password1', 
+            'password2', 
+            ]
 
 class PostForm(ModelForm):
     class Meta:
