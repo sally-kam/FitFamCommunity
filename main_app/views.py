@@ -44,7 +44,9 @@ class SignUp(CreateView):
 
   def form_valid(self, form):
       response = super().form_valid(form)
-      Profile.objects.create(user=self.object)
+      print(form.cleaned_data)
+      Profile.objects.create(user=self.object, date_of_birth=form.cleaned_data['date_of_birth'], bio=form.cleaned_data['bio'])
+      print("self.object", self.object)
       login(self.request, self.object)
       return response
 

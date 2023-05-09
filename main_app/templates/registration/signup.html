@@ -4,7 +4,6 @@
 <h1>Sign Up</h1>
 
 <p class="red-text">{{ error_message }}</p>
-<script src="jquery-3.6.4.min.js"></script>
 {{ form.media }}
 <form method="POST" action="{% url 'signup' %}">
   {% csrf_token %}
