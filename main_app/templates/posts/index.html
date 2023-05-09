@@ -2,6 +2,7 @@
 {% block content %}
 
 <h1>NewsFeed</h1>
+<li><a href="{% url 'posts_create' %}">Create a post</a></li>
 {% for post in posts %}
   <a href="{% url 'detail' post.id %}">
     <div class="card">

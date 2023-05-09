@@ -1,29 +1,29 @@
-from django.forms import ModelForm
-from .models import Profile
+from django.forms import ModelForm, Textarea
+from .models import Post
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django import forms
+from bootstrap_datepicker_plus.widgets import DatePickerInput
 
-class ProfileForm(ModelForm):
-    class Meta:
-        model = Profile
-        fields = ['first_name', 'last_name', 'email', 'date_of_birth'] # add your additional fields here
 
-class CustomUserCreationForm(UserCreationForm):
-    profile = ProfileForm()
-
-    class Meta(UserCreationForm.Meta):
-        model = User
-        fields = UserCreationForm.Meta.fields + ('email',)
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.email = self.cleaned_data["email"]
-        if commit:
-            user.save()
-        profile_data = self.cleaned_data.get('profile')
-        if profile_data:
-            profile = Profile.objects.create(user=user, **profile_data)
-            profile.save()
-        return user
     
 
+class SignUpForm(UserCreationForm):
+    email = forms.EmailField(max_length=254, required=True, help_text='Required. Enter a valid email address.')
+    first_name = forms.CharField(max_length=30, required=True, help_text='Required.')
+    last_name = forms.CharField(max_length=30, required=True, help_text='Required.')
+    date_of_birth = forms.DateField(widget=DatePickerInput())
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'date_of_birth')
+    
+
+class PostForm(ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'content']
+        widgets = {
+            'title': Textarea(attrs={'rows': 2, 'cols': 80}),
+            'content': Textarea(attrs={'rows': 10, 'cols': 80}),
+        }

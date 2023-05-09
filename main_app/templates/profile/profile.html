@@ -2,7 +2,7 @@
 {% block content %}
 <h1>My Profile</h1>
 {% if profile %}
-    <p>Name: {{ profile.user }}</p>
+    <p>Name: {{ profile.user.email }}</p>
     <p>Email: {{ profile.email }}</p>
     <p>Date of Birth: {{ profile.date_of_birth }}</p>
 {% else %}
