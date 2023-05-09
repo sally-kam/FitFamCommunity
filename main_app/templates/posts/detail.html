@@ -8,6 +8,10 @@
         <h6>{{ post.date }}</h6>
         <p>{{ post.content|linebreaks }}</p>
       </div>
+      <div class="card-action">
+        <a href="{% url 'posts_update' post.id %}" class="btn btn-outline-warning" >Edit</a>
+        <a href="{% url 'posts_delete' post.id %}" class="btn btn-outline-warning">Delete</a>
+      </div>
     </div>
 
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Post, Profile
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
@@ -78,12 +78,18 @@ def create_profile(sender, instance, created, **kwargs):
 class PostCreate(CreateView):
     model = Post
     form_class = PostForm
-    
+
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+class PostUpdate(UpdateView):
+  model = Post
+  form_class = PostForm
 
+class PostDelete(DeleteView):
+  model = Post
+  success_url = '/posts'
 
 
 
