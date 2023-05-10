@@ -9,9 +9,26 @@
         <p>{{ post.content|linebreaks }}</p>
       </div>
       <div class="card-action">
+        {% if user.is_authenticated and user == post.user %}
         <a href="{% url 'posts_update' post.id %}" class="btn btn-outline-warning" >Edit</a>
         <a href="{% url 'posts_delete' post.id %}" class="btn btn-outline-warning">Delete</a>
+        {% endif %}
       </div>
+
+      <div class="card-content" >
+      <h4>Comments...</h4>
+      {% if not post.comments.all %}
+        no comments yet...<a href="a">add one</a>
+      {% else %}
+        {% for comment in post.comments.all %}
+          <strong><h5>{{comment.user}}</h5></strong>
+          <p>{{ comment.date_added}}</p>
+          <p>{{ comment.text}}</p>
+          <br>
+        {% endfor %}
+      {% endif%}
+    </div>
+
     </div>
 
 {% endblock %}

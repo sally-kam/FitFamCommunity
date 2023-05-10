@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
@@ -9,9 +9,11 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import SignUpForm, PostForm
-from .models import Profile
-from django.urls import reverse_lazy
+from .forms import SignUpForm, PostForm, CommentForm
+from .models import Profile, Comment
+from django.urls import reverse_lazy, reverse
+from django.http import HttpResponseRedirect
+
 # Create your views here.
 
 # Define the home view
@@ -37,7 +39,20 @@ def posts_index(request):
         'posts': posts
   })
 
-class SignUp(CreateView):
+
+class PostList(LoginRequiredMixin, ListView):
+    model = Post
+    template_name = 'posts/index.html'
+    context_object_name = 'posts'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comment_form'] = CommentForm()
+        return context
+      
+
+
+class SignUp(LoginRequiredMixin, CreateView):
   form_class = SignUpForm
   success_url = reverse_lazy('posts_index')
   template_name = 'registration/signup.html'
@@ -45,7 +60,10 @@ class SignUp(CreateView):
   def form_valid(self, form):
       response = super().form_valid(form)
       print(form.cleaned_data)
-      Profile.objects.create(user=self.object, date_of_birth=form.cleaned_data['date_of_birth'], bio=form.cleaned_data['bio'])
+      Profile.objects.create(
+         user=self.object, 
+         date_of_birth=form.cleaned_data['date_of_birth'], 
+         bio=form.cleaned_data['bio'])
       print("self.object", self.object)
       login(self.request, self.object)
       return response
@@ -53,36 +71,21 @@ class SignUp(CreateView):
   def form_invalid(self, form):
       return self.render_to_response(self.get_context_data(form=form, error_message='Invalid sign up - try again'))
 
-# def signup(request):
-#   error_message = ''
-#   if request.method == 'POST':
-#     # This is how to create a 'user' form object
-#     # that includes the data from the browser
-#     form = SignUpForm(request.POST)
-#     if form.is_valid():
-#       # This will add the user to the database
-#       user = form.save()
-#       Profile.objects.create(user=user)
-#       # This is how we log a user in via code
-#       login(request, user)
-#       return redirect('posts_index')
-#     else:
-#       error_message = 'Invalid sign up - try again'
-#   # A bad POST or a GET request, so render signup.html with an empty form
-#   form = SignUpForm()
-#   context = {'form': form, 'error_message': error_message}
-#   return render(request, 'registration/signup.html', context)
+
+
+   
 
 def posts_detail(request, post_id):
-  post = Post.objects.get(id=post_id)
-  return render(request, 'posts/detail.html', { 'post': post })
+  post = get_object_or_404(Post, id=post_id)
+  form = CommentForm()
+  return render(request, 'posts/detail.html', { 'post': post, 'form':form })
 
 
 
 
 
 
-class PostCreate(CreateView):
+class PostCreate(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
 
@@ -90,13 +93,45 @@ class PostCreate(CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
-class PostUpdate(UpdateView):
+class PostUpdate(LoginRequiredMixin, UpdateView):
   model = Post
   form_class = PostForm
 
-class PostDelete(DeleteView):
+class PostDelete(LoginRequiredMixin, DeleteView):
   model = Post
   success_url = '/posts'
 
+def like_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    liked = False
 
+    if post.likes.filter(id=request.user.id).exists():
+        post.likes.remove(request.user)
+        liked = False
+    else:
+        post.likes.add(request.user)
+        liked = True
+
+    return HttpResponseRedirect(reverse('posts_index'))
+
+
+class CommentCreate(LoginRequiredMixin,CreateView):
+   model = Comment
+   form_class = CommentForm
+   template_name = 'posts/index.html'
+   success_url= reverse_lazy('post_index')
+
+   def form_valid(self, form):
+        form.instance.post_id = self.kwargs['pk']
+        form.instance.user = self.request.user  
+        return super().form_valid(form)
+
+   def get_success_url(self):
+        return reverse_lazy('posts_index')
+   
+
+# def unlike_post(request, pk):
+#    post = get_object_or_404(Post, pk=pk)
+#    post.likes.remove(request.user)
+#    return redirect('post_detail', pk=pk)
 

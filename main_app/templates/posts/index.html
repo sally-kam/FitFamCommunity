@@ -1,24 +1,85 @@
 {% extends 'base.html' %}
 {% block content %}
 
+
+
 <h1>NewsFeed</h1>
 
 <a  href="{% url 'posts_create' %}" class=" input-group ">
-  <input  type="search" class="form-control rounded " placeholder="Create a post" aria-label="Search" aria-describedby="search-addon" />
+  <input  type="search" class="form-control rounded " placeholder="Create a post..." aria-label="Search" aria-describedby="search-addon" />
 </a>
 </div>
 
-
+<hr>
 {% for post in posts %}
-  <a href="{% url 'posts_detail' post.id %}">
+  <a href="{% url 'posts_detail' post.id %}" class="text-decoration-none">
     <div class="card">
       <div class="card-content">
         <h3 class="card-title">{{ post.title }}</h3>
         <h6>{{ post.date }}</h6>
         <p>{{ post.content|linebreaks }}</p>
-      </div>
-    </div>
-  </a>
-  {% endfor %}
-{% endblock %}
+      </a>     
 
+      <form action="{% url 'like_post' post.pk %}" method="POST">
+        {% csrf_token %}
+        {% if post.liked %}
+        <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-md">
+          unlike
+        </button>
+        {% else %}
+        <button type="submit" name="post_id" value="{{ post.id }}" class="btn btn-md">
+          like
+        </button>
+        {% endif %}
+        - {{ post.total_likes }} likes
+      </form>
+
+      <hr>
+      
+
+      <!-- Display Comment Form -->
+      <button class="toggle-comment-form" data-post-id="{{ post.id }}">Toggle Comment Form</button>
+      <div id="comment-form-container-{{ post.id }}" style="display: none;">
+        <form method="POST" action="{% url 'comment_create' post.pk%}">
+          {% csrf_token %}
+          <h8>Add Comment:</h8>
+          {{ comment_form.as_p }}
+          <button type="submit">add comment</button>
+        </form>
+      </div>
+
+
+      
+      <br>
+      <hr>
+      <!-- Display All Comments -->
+      <h4>Comments...</h4>
+      <br>
+      {% if not post.comments.all %}
+        no comments yet...<a href="a">add one</a>
+      {% else %}
+        {% for comment in post.comments.all %}
+          <strong><h5>{{comment.user}}</h5></strong>
+          <p>{{ comment.date_added}}</p>
+          <p>{{ comment.text}}</p>
+          <br>
+        {% endfor %}
+      {% endif%}
+
+
+
+    </div>
+    </div>
+  {% endfor %}
+
+      <!-- jQuery code -->
+      <script>
+    $(document).ready(function() {
+      $('.toggle-comment-form').click(function() {
+        var postId = $(this).data('post-id');
+        $('#comment-form-container-' + postId).toggle();
+      });
+      });
+      </script>
+
+{% endblock %}

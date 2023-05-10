@@ -1,5 +1,5 @@
 from django.forms import ModelForm, Textarea
-from .models import Post
+from .models import Post, Comment
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
@@ -33,4 +33,13 @@ class PostForm(ModelForm):
         widgets = {
             'title': Textarea(attrs={'rows': 2, 'cols': 80}),
             'content': Textarea(attrs={'rows': 10, 'cols': 80}),
+        }
+
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        widgets = {
+            'comment': Textarea(attrs={'rows': 1, 'cols': 80})
+            
         }

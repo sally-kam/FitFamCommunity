@@ -25,11 +25,13 @@ class Profile(models.Model):
     
 class Post(models.Model):
     title = models.CharField(max_length=100)
-    content = models.CharField(max_length=1000)
+    content = models.TextField(max_length=1000)
     date = models.DateTimeField(default=timezone.now, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    comments = models.ManyToManyField('Comment', blank=True)
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+
+    def total_likes(self):
+        return self.likes.count()
 
     def __str__(self):
         return f"{self.title} posted on {self.date}"
@@ -41,10 +43,18 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    text = models.CharField(max_length=1000)
+    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE) 
+    text = models.TextField(max_length=1000)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateTimeField(default=timezone.now, blank=True)
+    date_added = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(User, related_name='liked_comments', blank=True)
 
+
     def __str__(self):
-        return f"{self.text} by {self.user.username} on {self.date}"
+        return f"{self.text} from {self.post.title} on {self.date_added}"
+    
+    def get_absolute_url(self):
+        return reverse('posts_detail', kwargs={'post_id': self.id})
+    
+    class Meta:
+        ordering = ['-date_added']
