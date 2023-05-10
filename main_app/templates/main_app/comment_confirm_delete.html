@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Delete Comment</h1>
+
+  <h4>Are you sure you want to delete?</h4>
+
+  <form action="" method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-warning">Yes</button>
+    <input type="button" class="btn btn-outline-warning" value="No" onclick="location.href='{% url 'posts_index' %}'">
+    
+  </form>
+{% endblock %}

@@ -40,6 +40,8 @@ class CommentForm(ModelForm):
         model = Comment
         fields = ['text']
         widgets = {
-            'comment': Textarea(attrs={'rows': 1, 'cols': 80})
-            
+            'text': Textarea(attrs={'rows': 10, 'cols': 80})
+        }
+        labels = {
+            'text': 'Comment'
         }

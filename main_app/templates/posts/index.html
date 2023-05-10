@@ -3,14 +3,15 @@
 
 
 
-<h1>NewsFeed</h1>
-
+<h1 class="text-center">NewsFeed</h1>
+<!-- create a post -->
 <a  href="{% url 'posts_create' %}" class=" input-group ">
   <input  type="search" class="form-control rounded " placeholder="Create a post..." aria-label="Search" aria-describedby="search-addon" />
 </a>
 </div>
 
 <hr>
+<!-- display all posts -->
 {% for post in posts %}
   <a href="{% url 'posts_detail' post.id %}" class="text-decoration-none">
     <div class="card">
@@ -19,7 +20,7 @@
         <h6>{{ post.date }}</h6>
         <p>{{ post.content|linebreaks }}</p>
       </a>     
-
+<!-- like/unlike post -->
       <form action="{% url 'like_post' post.pk %}" method="POST">
         {% csrf_token %}
         {% if post.liked %}
@@ -40,7 +41,7 @@
       <!-- Display Comment Form -->
       <button class="toggle-comment-form" data-post-id="{{ post.id }}">Toggle Comment Form</button>
       <div id="comment-form-container-{{ post.id }}" style="display: none;">
-        <form method="POST" action="{% url 'comment_create' post.pk%}">
+        <form method="POST" action="{% url 'comments_create' post.pk%}">
           {% csrf_token %}
           <h8>Add Comment:</h8>
           {{ comment_form.as_p }}
@@ -53,18 +54,32 @@
       <br>
       <hr>
       <!-- Display All Comments -->
+      
       <h4>Comments...</h4>
       <br>
       {% if not post.comments.all %}
-        no comments yet...<a href="a">add one</a>
+        no comments yet...
       {% else %}
         {% for comment in post.comments.all %}
-          <strong><h5>{{comment.user}}</h5></strong>
-          <p>{{ comment.date_added}}</p>
-          <p>{{ comment.text}}</p>
-          <br>
+          <div class="row">
+            <div class="col-10">
+              <strong><h5>{{ comment.user }}</h5></strong>
+              <p>{{ comment.date_added }}</p>
+              <p>{{ comment.text }}</p>
+            </div>
+            <div class="col-2 d-flex justify-content-end">
+              {% if user.is_authenticated and user == comment.user %}
+              <a href="{% url 'comments_delete' post.id comment.id %}">
+                <button type="button" class="close" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </a>
+              {% endif %}
+            </div>
+          </div>
         {% endfor %}
-      {% endif%}
+      {% endif %}
+      
 
 
 

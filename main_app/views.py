@@ -5,9 +5,6 @@ from django.views.generic import ListView, DetailView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import SignUpForm, PostForm, CommentForm
 from .models import Profile, Comment
@@ -119,7 +116,7 @@ class CommentCreate(LoginRequiredMixin,CreateView):
    model = Comment
    form_class = CommentForm
    template_name = 'posts/index.html'
-   success_url= reverse_lazy('post_index')
+   success_url= reverse_lazy('/posts')
 
    def form_valid(self, form):
         form.instance.post_id = self.kwargs['pk']
@@ -129,6 +126,15 @@ class CommentCreate(LoginRequiredMixin,CreateView):
    def get_success_url(self):
         return reverse_lazy('posts_index')
    
+# class CommentUpdate(LoginRequiredMixin, UpdateView):
+#   model = Comment
+#   form_class = CommentForm
+
+
+class CommentDelete(LoginRequiredMixin, DeleteView):
+  model = Comment
+  success_url = reverse_lazy('posts_index')
+
 
 # def unlike_post(request, pk):
 #    post = get_object_or_404(Post, pk=pk)

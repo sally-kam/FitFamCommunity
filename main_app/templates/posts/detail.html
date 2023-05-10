@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Post Details</h1>
+<h1 class="text-center">Post Details</h1>
     <div class="card">
       <div class="card-content">
         <h3 class="card-title">{{ post.title }}</h3>
@@ -24,7 +24,7 @@
           <strong><h5>{{comment.user}}</h5></strong>
           <p>{{ comment.date_added}}</p>
           <p>{{ comment.text}}</p>
-          <br>
+          <hr>
         {% endfor %}
       {% endif%}
     </div>
