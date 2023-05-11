@@ -20,7 +20,7 @@
     
     <title>Health Hive</title>
 </head>
-<body style="padding-bottom: 30px;">
+<body style="background-color: #f6f5f3;">
   <nav class="navbar navbar-fixed-top navbar-expand-lg navbar-right p-0" style="background-color: #ffaa42; z-index:9999">
     <div class="container-fluid">
       <a class="navbar-brand text-white" href="{% url 'home' %}">
@@ -71,13 +71,13 @@
         {% block content %}
         {% endblock %}
       </main>
-
+      <footer class="text-center text-white pb-0" style="background-color: #ffaa42">
+        <div >All Rights Reserved, &copy; 2023 HealthHive &nbsp;</div>
+      </footer>
 </body>
 
     <script src="//localhost:35729/livereload.js"></script> 
 </html>
-      <footer class="text-center text-white fixed-bottom" style="background-color: #ffaa42">
-        <div >All Rights Reserved, &copy; 2023 HealthHive &nbsp;</div>
-      </footer>
+
 
 
