@@ -9,9 +9,10 @@ from .forms import SignUpForm, PostForm, CommentForm
 from .models import Profile, Comment
 from django.urls import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
-
+import requests
+import json
 # Create your views here.
-
+# iDY/ohuCxpLGD4yb3YtGVA==1LV8KxQR4T6PSsMs
 # Define the home view
 def home(request):
   # Include an .html file extension - unlike when rendering EJS templates
@@ -19,6 +20,24 @@ def home(request):
 
 def about(request):
     return render(request, 'about.html')
+
+@login_required
+def food_calorie_counter(request):
+    if request.method == 'POST':
+        query = request.POST['query']
+        api_url = 'https://api.api-ninjas.com/v1/nutrition?query='
+        api_request = requests.get(api_url + query, headers={'X-Api-Key': 'iDY/ohuCxpLGD4yb3YtGVA==1LV8KxQR4T6PSsMs'})
+        try:
+            food = json.loads(api_request.content)
+            print(api_request.content)
+        except Exception as e:
+            food = "Search Error!"
+            print(e)
+        return render(request, 'resources/food_calorie_counter.html', {'food': food})
+    else:
+        return render(request, 'resources/food_calorie_counter.html', {'query': 'Enter a valid query'})
+
+
 
 @login_required
 def profile_index(request):
@@ -70,7 +89,7 @@ class SignUp(CreateView):
 
 
    
-
+@login_required
 def posts_detail(request, post_id):
   post = get_object_or_404(Post, id=post_id)
   form = CommentForm()
@@ -97,6 +116,7 @@ class PostDelete(LoginRequiredMixin, DeleteView):
   model = Post
   success_url = '/posts'
 
+@login_required
 def like_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
     liked = False

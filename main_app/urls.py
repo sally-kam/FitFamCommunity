@@ -19,6 +19,7 @@ urlpatterns = [
     path('profile/', views.profile_index, name='profile_index'),
     path('signup/', SignUp.as_view(), name='signup'),
     path('posts/<int:post_id>/', views.posts_detail, name='posts_detail'),
+    path('resources/foodcaloriecounter', views.food_calorie_counter, name='food_calorie_counter'),
 ]
 
 if settings.DEBUG:

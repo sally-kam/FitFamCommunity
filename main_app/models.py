@@ -20,7 +20,7 @@ class Profile(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField(max_length=1000)
-    date = models.DateTimeField(default=timezone.now, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
 

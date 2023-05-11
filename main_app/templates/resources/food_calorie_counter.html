@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load mathfilters %}
+{% load humanize %}
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.min.js" integrity="sha512-mlz/Fs1VtBou2TrUkGzX4VoGvybkD9nkeXWJm3rle0DPHssYYx4j+8kIS15T78ttGfmOjH0lLaBXGcShaVkdkg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script>
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['carbohydrates', 'Cholesterol', 'Saturated fat', 'Total Fat', 'Fiber Content', 'Potassium', 'Protein','Sodium','Sugar'],
+                    datasets: [{
+                        label: 'Nutritional values of {{api.0.name | capfirst}}',
+                        data: [
+                              {{food.0.carbohydrates_total_g}},
+                              {{food.0.cholesterol_mg}},
+                              {{food.0.fat_saturated_g}},
+                              {{food.0.fat_saturated_g}},
+                              {{food.0.fat_total_g}},
+                              {{food.0.potassium_mg}},
+                              {{food.0.protein_g}},
+                              {{food.0.sodium_mg}},
+                              {{food.0.sugar_g}},
+                        ],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive:true,
+                    maintainAspectRatio:false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            </script>
+
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <img src="https://i.imgur.com/37MxLX8.png" class=" img-responsive" height="30"/> 
+            <span><h1>Food Calorie Counter</h1></span>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="input-group input-group-lg mb-5">
+                    <input type="search" name="query" class="form-control inputstyle"
+                        placeholder="search for calories in your food..." required>
+                    <button class="btn btn-primary" type="submit" id="button-addon2">Find calories</button>
+                </div>
+            </form>
+            {% if food %}
+            {% if food == "Search Error!" %}
+            <div class="alert alert-warning"> Invalid. Please try again. </div>
+            {% else %}
+            <h1> {{food.0.name | capfirst }} has a total of <strong> {{food.0.calories}} Calories</strong>
+                {% if food.0.calories > 200 %}
+                <img src="https://i.imgur.com/8trBP6B.png" class="img-responsive" />
+                {% endif %}
+            </h1>
+            <!-- according to heart.org an ideal limit of sodium is no more than 1,500 mg per day for most adults -->
+                {% if food.0.sodium_mg > 1500 %}
+            <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
+                <div>
+                    This particular food is rich in sodium, which can lead to significant dehydration and excessive water retention.
+                </div>
+            </div>
+                {% endif %}
+                <!-- according to AHA, men should take 36 grams and women should take 25 grams of added sugar per day -->
+                {%if food.0.sugar_g > 30 %}
+            <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
+                <div>
+                    This food has a high sugar content, which can result in insulin spikes and is a leading cause of obesity.
+                </div>
+            </div>
+                {%endif%}
+        </div>
+        <div class="row justify-content-center mt-5 mb-5">
+            <div class="col-md-10 caloriescont shadow rounded">
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <h2 class="mt-3 mb-4">Nutritional Values </h2><span></span>
+                        <ul>
+                            <li class="servingsize">Serving Size per 100/Grams <span class="float-end"></span></li>
+                            <li>Carbohydrates: <span class="float-end">{{food.0.carbohydrates_total_g}}</span></li>
+                            <li>Cholesterol: <span class="float-end">{{food.0.cholesterol_mg}}</span></li>
+                            <li>Saturated fat: <span class="float-end">{{food.0.fat_saturated_g}}</span></li>
+                            <li>Total Fat: <span class="float-end">{{food.0.fat_saturated_g}}</span></li>
+                            <li>Fiber Content: <span class="float-end">{{food.0.fat_total_g}}</span></li>
+                            <li>Potassium <span class="float-end">{{food.0.potassium_mg}}</span></li>
+                            <li>Protein: <span class="float-end">{{food.0.protein_g}}</span></li>
+                            <li>Sodium:<span class="float-end">{{food.0.sodium_mg}}</span></li>
+                            <li>Sugar: <span class="float-end">{{food.0.sugar_g}}</span></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6 mb-5">
+                        <h4 class="mt-3 mb-4">To burn {{food.0.calories}} calories you will have to</h4>
+                        <div class="d-flex align-items-center mb-5">
+                            <div class="flex-shrink-0">
+                                <img src="https://i.imgur.com/mzXlllh.png" alt="...">
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5> Jog </h5>
+                                <p>you will have to jog for <strong>{{food.0.calories | div:229 | mul:60 | floatformat:0 }}</strong> Minutes</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-5">
+                            <div class="flex-shrink-0">
+                                <img src="https://i.imgur.com/2Ig79Um.png" alt="...">
+                            </div>
+                            <div class="flex-grow-1 ms-4">
+                                <h5> Do Power Yoga </h5>
+                                <p>you will have to Power Yoga for <strong>{{food.0.calories | div:223 | mul:60 | floatformat:0 }}</strong> Minutes</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-5">
+                            <div class="flex-shrink-0">
+                                <img src="https://i.imgur.com/TLKwvMc.png" alt="...">
+                            </div>
+                            <div class="flex-grow-1 ms-4">
+                                <h5>Get a Gym Workout </h5>
+                                <p>you will have to lift weight for <strong>{{food.0.calories | div:483 | mul:60 | floatformat:0 }}</strong> Minutes </p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <img src="https://i.imgur.com/zPIpMWj.png" alt="...">
+                            </div>
+                            <div class="flex-grow-1 ms-1">
+                                <h5> Go for a Brisk Walk </h5>
+                                <p>you will have to brisk walk for <strong> {{food.0.calories | div:294 | mul:60 | floatformat:0 }} </strong> Minutes</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                        <canvas id="myChart" width="400" height="400"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+
+
+{% endblock %}
