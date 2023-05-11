@@ -1,8 +1,7 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404
 from .models import Post
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic import ListView, DetailView
-from django.contrib.auth.forms import UserCreationForm
+from django.views.generic import ListView
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -49,7 +48,7 @@ class PostList(LoginRequiredMixin, ListView):
       
 
 
-class SignUp(LoginRequiredMixin, CreateView):
+class SignUp(CreateView):
   form_class = SignUpForm
   success_url = reverse_lazy('posts_index')
   template_name = 'registration/signup.html'
@@ -116,7 +115,7 @@ class CommentCreate(LoginRequiredMixin,CreateView):
    model = Comment
    form_class = CommentForm
    template_name = 'posts/index.html'
-   success_url= reverse_lazy('/posts')
+
 
    def form_valid(self, form):
         form.instance.post_id = self.kwargs['pk']

@@ -15,10 +15,21 @@
         {% endif %}
       </div>
 
+     <!-- Display Comment Form -->
+     <button class="toggle-comment-form" data-post-id="{{ post.id }}">Toggle Comment Form</button>
+     <div id="comment-form-container-{{ post.id }}" style="display: none;">
+       <form method="POST" action="{% url 'comments_create' post.pk%}">
+         {% csrf_token %}
+         <h8>Add Comment:</h8>
+         {{ comment_form.as_p }}
+         <button type="submit">post comment</button>
+       </form>
+     </div>
+
       <div class="card-content" >
       <h4>Comments...</h4>
       {% if not post.comments.all %}
-        no comments yet...<a href="a">add one</a>
+        no comments yet...
       {% else %}
         {% for comment in post.comments.all %}
           <strong><h5>{{comment.user}}</h5></strong>
@@ -30,5 +41,12 @@
     </div>
 
     </div>
-
+    <script>
+      $(document).ready(function() {
+        $('.toggle-comment-form').click(function() {
+          var postId = $(this).data('post-id');
+          $('#comment-form-container-' + postId).toggle();
+        });
+        });
+        </script>
 {% endblock %}
