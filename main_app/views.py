@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView
@@ -50,6 +50,15 @@ def profile_index(request):
 @login_required
 def posts_index(request):
   posts = Post.objects.all()
+  msg = False
+    
+  if request.user.is_authenticated:
+        user = request.user
+        
+    
+        if post.likes.filter(id=user.id).exists():
+            msg = True
+
   return render(request, 'posts/index.html', {
         'posts': posts
   })
@@ -130,11 +139,22 @@ def like_post(request, pk):
 
     return HttpResponseRedirect(reverse('posts_index'))
 
+@login_required
+def like_post2(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+
+    if post.likes.filter(id=request.user.id).exists():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+
+    return redirect(reverse('posts_detail', kwargs={'post_id': pk}))
+
+
 
 class CommentCreate(LoginRequiredMixin,CreateView):
    model = Comment
    form_class = CommentForm
-   template_name = 'posts/index.html'
 
 
    def form_valid(self, form):
@@ -144,6 +164,19 @@ class CommentCreate(LoginRequiredMixin,CreateView):
 
    def get_success_url(self):
         return reverse_lazy('posts_index')
+   
+class CommentCreate2(LoginRequiredMixin,CreateView):
+   model = Comment
+   form_class = CommentForm
+
+
+   def form_valid(self, form):
+        form.instance.post_id = self.kwargs['pk']
+        form.instance.user = self.request.user  
+        return super().form_valid(form)
+
+   def get_success_url(self):
+        return reverse_lazy('posts_detail', kwargs={'post_id': self.kwargs['pk']})
    
 # class CommentUpdate(LoginRequiredMixin, UpdateView):
 #   model = Comment
