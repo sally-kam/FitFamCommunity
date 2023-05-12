@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="card text-center">
+<div class="card text-center border border-2 border-warning">
   <div class="card-content">
   <h1>Delete Post</h1>
 
@@ -9,8 +9,8 @@
 
   <form action="" method="POST">
     {% csrf_token %}
-    <button type="submit" class="btn btn-outline-warning">Yes</button>
-    <input type="button" class="btn btn-outline-warning" value="No" onclick="location.href='{% url 'posts_detail' post.id %}'">
+    <button type="submit" class="btn btn-warning">Yes</button>
+    <input type="button" class="btn btn-warning" value="No" onclick="location.href='{% url 'posts_detail' post.id %}'">
     
   </form>
 </div>

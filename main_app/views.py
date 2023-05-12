@@ -1,8 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views import generic
 from .models import Post
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth.forms import PasswordChangeForm
+
 from django.views.generic import ListView, DetailView
 from django.contrib.auth import login
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import SignUpForm, PostForm, CommentForm
@@ -39,29 +44,30 @@ def food_calorie_counter(request):
 
 
 
-@login_required
-def profile_index(request):
-    profile = Profile.objects.filter(user=request.user)
-    print(profile)
-    return render(request, 'profile/profile.html', {
-       'profile': profile
-    })
+class ProfileDetail(ListView):
+    model = Profile
+    template_name = 'profile/profile.html'
+    context_object_name = 'profile'
 
-@login_required
-def posts_index(request):
-  posts = Post.objects.all()
-  msg = False
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
+
+# @login_required
+# # def posts_index(request):
+# #   posts = Post.objects.all()
+# #   msg = False
     
-  if request.user.is_authenticated:
-        user = request.user
+# #   if request.user.is_authenticated:
+# #         user = request.user
         
     
-        if post.likes.filter(id=user.id).exists():
-            msg = True
+# #         if post.likes.filter(id=user.id).exists():
+# #             msg = True
 
-  return render(request, 'posts/index.html', {
-        'posts': posts
-  })
+# #   return render(request, 'posts/index.html', {
+# #         'posts': posts
+# #   })
 
 
 class PostList(LoginRequiredMixin, ListView):
@@ -86,7 +92,7 @@ class PostList(LoginRequiredMixin, ListView):
       
 
 
-class SignUp(CreateView):
+class SignUp(generic.CreateView):
   form_class = SignUpForm
   success_url = reverse_lazy('posts_index')
   template_name = 'registration/signup.html'
@@ -106,6 +112,30 @@ class SignUp(CreateView):
       return self.render_to_response(self.get_context_data(form=form, error_message='Invalid sign up - try again'))
 
 
+class EditProfile(UpdateView):
+  model = Profile
+  template_name = 'registration/edit_profile.html'
+  fields = ['bio', 'date_of_birth']
+  success_url = reverse_lazy('profile_detail')
+
+class EditSettings(UpdateView):
+  model = User
+  template_name = 'registration/edit_settings.html'
+  fields = ['username', 'first_name', 'last_name', 'email']
+  success_url = reverse_lazy('profile_detail') 
+
+def get_object(self, queryset=None):
+        return self.request.user
+
+def form_valid(self, form):
+        response = super().form_valid(form)
+        # Perform any additional processing or redirect logic
+        return response
+
+class EditPassword(LoginRequiredMixin, PasswordChangeView):
+    form_class = PasswordChangeForm
+    template_name = 'registration/edit_password.html'
+    success_url = reverse_lazy('profile_detail')
 
    
 # @login_required
@@ -114,7 +144,7 @@ class SignUp(CreateView):
 #   form = CommentForm()
 #   return render(request, 'posts/detail.html', { 'post': post, 'form':form })
 
-class PostDetail(DetailView):
+class PostDetail(LoginRequiredMixin, DetailView):
     model = Post
     template_name = 'posts/detail.html'
     context_object_name = 'post'

@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="card p-5">
+<div class="card p-5 border border-2 border-warning">
 <h1>Log In</h1>
 <form method="POST" action="{% url 'login' %}">
     {% csrf_token %}
     {{ form.as_p }}
     <input type="hidden" name="next" value="{{ next }}">
-    <button type="submit" class="btn">Log In</button>
+    <button type="submit" class="btn btn-warning">Log In</button>
   </form>
   <br>
 

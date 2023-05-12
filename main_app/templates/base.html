@@ -46,8 +46,18 @@
           <li class="nav-item text-white">
             <a class="nav-link text-white" href="{% url 'food_calorie_counter' %}">Resources</a>
           </li>
-          <li class="nav-item text-white">
-            <a class="nav-link text-white" href="{% url 'profile_index' %}">My Profile</a>
+
+          <li class="nav-item dropdown justify-content-center text-white">
+            <a class="nav-link text-white dropdown-toggle text-center justify-content-center" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdownMenuButton">
+              Profile
+            </a>
+            <ul class="dropdown-menu border-warning text-center" aria-labelledby="dropdownMenuButton">
+              <li><a class="dropdown-item border-warning text-center justify-content-center" href="{% url 'profile_detail' %}">My Profile</a></li>
+              <li><a class="dropdown-item border-warning text-center justify-content-center" href="{% url 'edit_profile' user.profile.id %}">Edit Profile</a></li>
+              <li><a class="dropdown-item border-warning text-center justify-content-center" href="{% url 'edit_settings' user.profile.id %}">Edit Settings</a></li>
+              <li><a class="dropdown-item border-warning text-center justify-content-center" href="{% url 'edit_password' user.profile.id %}">Change Password</a></li>
+            </ul>
+          </li>
           </li>                
           <li class="nav-item text-white">
             <a class="nav-link text-white" href="{% url 'logout' %}">Log Out</a>
