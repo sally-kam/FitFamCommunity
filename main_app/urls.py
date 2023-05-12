@@ -20,7 +20,7 @@ urlpatterns = [
     # path('posts/like/<int:pk>', views.unlike_post, name='unlike_post'),
     path('profile/', views.profile_index, name='profile_index'),
     path('signup/', SignUp.as_view(), name='signup'),
-    path('posts/<int:post_id>/', views.posts_detail, name='posts_detail'),
+    path('posts/<int:pk>/', views.PostDetail.as_view(), name='posts_detail'),
     path('resources/foodcaloriecounter', views.food_calorie_counter, name='food_calorie_counter'),
 ]
 

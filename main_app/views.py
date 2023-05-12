@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -72,6 +72,16 @@ class PostList(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['comment_form'] = CommentForm()
+        context['liked'] = False
+
+        if self.request.user.is_authenticated:
+            user = self.request.user
+
+            # Loop over the posts and check if the user has liked each post
+            for post in context['posts']:
+                if post.likes.filter(id=user.id).exists():
+                    post.liked = True
+
         return context
       
 
@@ -98,13 +108,27 @@ class SignUp(CreateView):
 
 
    
-@login_required
-def posts_detail(request, post_id):
-  post = get_object_or_404(Post, id=post_id)
-  form = CommentForm()
-  return render(request, 'posts/detail.html', { 'post': post, 'form':form })
+# @login_required
+# def posts_detail(request, post_id):
+#   post = get_object_or_404(Post, id=post_id)
+#   form = CommentForm()
+#   return render(request, 'posts/detail.html', { 'post': post, 'form':form })
 
+class PostDetail(DetailView):
+    model = Post
+    template_name = 'posts/detail.html'
+    context_object_name = 'post'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = CommentForm()
+        context['liked'] = False
+
+        post = self.object
+        user = self.request.user
+        context['liked'] = post.likes.filter(id=user.id).exists()
+
+        return context
 
 
 
@@ -148,7 +172,7 @@ def like_post2(request, pk):
     else:
         post.likes.add(request.user)
 
-    return redirect(reverse('posts_detail', kwargs={'post_id': pk}))
+    return redirect(reverse('posts_detail', kwargs={'pk': pk}))
 
 
 
@@ -176,7 +200,7 @@ class CommentCreate2(LoginRequiredMixin,CreateView):
         return super().form_valid(form)
 
    def get_success_url(self):
-        return reverse_lazy('posts_detail', kwargs={'post_id': self.kwargs['pk']})
+        return reverse_lazy('posts_detail', kwargs={'pk': self.kwargs['pk']})
    
 # class CommentUpdate(LoginRequiredMixin, UpdateView):
 #   model = Comment

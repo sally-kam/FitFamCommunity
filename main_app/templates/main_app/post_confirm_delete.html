@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="card text-center">
+  <div class="card-content">
   <h1>Delete Post</h1>
 
-  <h4>Are you sure you want to delete <span class="teal-text">{{ object.name }}</span>?</h4>
+  <h4>Are you sure you want to delete your post?</h4>
 
   <form action="" method="POST">
     {% csrf_token %}
@@ -11,4 +13,6 @@
     <input type="button" class="btn btn-outline-warning" value="No" onclick="location.href='{% url 'posts_detail' post.id %}'">
     
   </form>
+</div>
+</div>  
 {% endblock %}
