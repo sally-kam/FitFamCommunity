@@ -44,7 +44,7 @@ def food_calorie_counter(request):
 
 
 
-class ProfileDetail(ListView):
+class ProfileDetail(LoginRequiredMixin, ListView):
     model = Profile
     template_name = 'profile/profile.html'
     context_object_name = 'profile'
@@ -112,13 +112,13 @@ class SignUp(generic.CreateView):
       return self.render_to_response(self.get_context_data(form=form, error_message='Invalid sign up - try again'))
 
 
-class EditProfile(UpdateView):
+class EditProfile(LoginRequiredMixin, UpdateView):
   model = Profile
   template_name = 'registration/edit_profile.html'
   fields = ['bio', 'date_of_birth']
   success_url = reverse_lazy('profile_detail')
 
-class EditSettings(UpdateView):
+class EditSettings(LoginRequiredMixin, UpdateView):
   model = User
   template_name = 'registration/edit_settings.html'
   fields = ['username', 'first_name', 'last_name', 'email']
@@ -232,18 +232,25 @@ class CommentCreate2(LoginRequiredMixin,CreateView):
    def get_success_url(self):
         return reverse_lazy('posts_detail', kwargs={'pk': self.kwargs['pk']})
    
-# class CommentUpdate(LoginRequiredMixin, UpdateView):
-#   model = Comment
-#   form_class = CommentForm
+
 
 
 class CommentDelete(LoginRequiredMixin, DeleteView):
   model = Comment
   success_url = reverse_lazy('posts_index')
 
+class CommentDelete2(LoginRequiredMixin, DeleteView):
+  model = Comment
+
+  def get_success_url(self):
+        post_pk = self.kwargs['post_pk']  # retrieve the post pk from the URL
+        return reverse('posts_detail', kwargs={'pk': post_pk})
+
 
 # def unlike_post(request, pk):
 #    post = get_object_or_404(Post, pk=pk)
 #    post.likes.remove(request.user)
 #    return redirect('post_detail', pk=pk)
-
+# class CommentUpdate(LoginRequiredMixin, UpdateView):
+#   model = Comment
+#   form_class = CommentForm

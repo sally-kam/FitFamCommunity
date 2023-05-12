@@ -74,7 +74,7 @@
             </div>
             <div class="col-2 d-flex justify-content-end">
               {% if user.is_authenticated and user == comment.user %}
-              <a href="{% url 'comments_delete' post.id comment.id %}">
+              <a href="{% url 'comments_delete2' post.id comment.id %}">
                 <button type="button" class="close btn border-warning btn-warning" aria-label="Close">
                   <span>X</span>
                 </button>
