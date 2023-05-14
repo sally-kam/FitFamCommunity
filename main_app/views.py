@@ -4,7 +4,6 @@ from .models import Post
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.forms import PasswordChangeForm
-
 from django.views.generic import ListView, DetailView
 from django.contrib.auth import login
 from django.contrib.auth.models import User
@@ -63,9 +62,6 @@ class ProfileDetail(LoginRequiredMixin, ListView):
         context['posts'] = posts
         context['comment_form'] = CommentForm()
         return context
-
-
-
 
 
 class PostList(LoginRequiredMixin, ListView):

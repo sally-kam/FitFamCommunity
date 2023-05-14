@@ -1,9 +1,7 @@
 from django.db import models
 # Import the User
 from django.contrib.auth.models import User
-from datetime import datetime
 from django.urls import reverse
-from storages.backends.s3boto3 import S3Boto3Storage
 
 
 # Create your models here.
