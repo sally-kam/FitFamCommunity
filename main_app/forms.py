@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from django import forms
 from bootstrap_datepicker_plus.widgets import DatePickerInput
+from django.forms import widgets
 
 
     
@@ -12,9 +13,9 @@ class SignUpForm(UserCreationForm):
     email = forms.EmailField(max_length=254, required=True, help_text='Required. Enter a valid email address.')
     first_name = forms.CharField(max_length=30, required=True, help_text='Required.')
     last_name = forms.CharField(max_length=30, required=True, help_text='Required.')
-    date_of_birth = forms.DateField(widget=DatePickerInput(), required=True)
-    bio = forms.CharField(max_length=5000, required=True, widget=Textarea(attrs={'rows': 8, 'cols': 80}))
-    profile_pic = forms.ImageField(label='Profile Picture')
+    date_of_birth = forms.DateField(widget=DatePickerInput(format='%Y-%m-%d', attrs={'style': 'width: 200px;'}), required=True)
+    bio = forms.CharField(max_length=5000, widget=Textarea(attrs={'rows': 8, 'cols': 80}))
+    profile_pic = forms.ImageField(label='Profile Picture', required=False)
     
     class Meta:
         model = User
@@ -27,20 +28,6 @@ class SignUpForm(UserCreationForm):
             'password2', 
             ]
         
-# class SettingsForm(UserChangeForm):
-#     email = forms.EmailField(max_length=254, required=True, help_text='Required. Enter a valid email address.')
-#     first_name = forms.CharField(max_length=30, required=True, help_text='Required.')
-#     last_name = forms.CharField(max_length=30, required=True, help_text='Required.')
-#     class Meta:
-#         model = User
-#         fields = [
-#             'username', 
-#             'first_name', 
-#             'last_name', 
-#             'email', 
-#             'password1', 
-#             'password2', 
-#             ]
 
     
 
@@ -65,14 +52,18 @@ class CommentForm(ModelForm):
             'text': 'Comment'
         }
 
-# class PhotoForm(forms.ModelForm):
-#     class Meta:
-#         model = Photo
-#         fields = ['url', 'profile']
 
 class EditProfileForm(forms.ModelForm):
     profile_pic = forms.ImageField(label='Profile Picture')
+    date_of_birth = forms.DateField(widget=DatePickerInput(format='%Y-%m-%d', attrs={'style': 'width: 200px;'}), label='Date of Birth')
+    bio = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 9}),
+        max_length=1000,
+        required=False,
+    )
+
     class Meta:
         model = Profile
         fields = ['date_of_birth', 'bio', 'profile_pic']
+
         

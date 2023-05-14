@@ -1,18 +1,20 @@
-{% extends 'base.html' %}
-
-{% block content %}
-<div class="card text-center border border-2 border-warning ">
+{% extends 'base.html' %} {% block content %}
+<div class="card text-center border border-2 border-warning">
   <div class="card-content">
-  <h1>Delete Comment</h1>
+    <h1>Delete Comment</h1>
 
-  <h4>Are you sure you want to delete?</h4>
+    <h4>Are you sure you want to delete?</h4>
 
-  <form action="" method="POST">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-warning">Yes</button>
-    <input type="button" class="btn btn-warning" value="No" onclick="location.href='{% url 'posts_index' %}'">
-    
-  </form>
+    <form action="" method="POST">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-warning">Yes</button>
+      <input
+        type="button"
+        class="btn btn-warning"
+        value="No"
+        onclick="location.href='{% url 'posts_index' %}'"
+      />
+    </form>
+  </div>
 </div>
-</div>  
 {% endblock %}

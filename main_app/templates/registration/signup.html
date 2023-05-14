@@ -1,14 +1,12 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <div class="card p-5 border border-2 border-warning">
-<h1>Sign Up</h1>
+  <h1>Sign Up</h1>
 
-<p class="red-text">{{ error_message }}</p>
-{{ form.media }}
-<form method="POST" action="{% url 'signup' %}">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <input type="submit" class="btn btn-warning" value="Sign Up">
-</form>
+  <p class="red-text">{{ error_message }}</p>
+  {{ form.media }}
+  <form method="POST" action="{% url 'signup' %}">
+    {% csrf_token %} {{ form.as_p }}
+    <input type="submit" class="btn btn-warning" value="Sign Up" />
+  </form>
 </div>
 {% endblock %}

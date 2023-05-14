@@ -29,7 +29,7 @@ class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField(max_length=1000)
     date = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
 
     def total_likes(self):
@@ -39,7 +39,7 @@ class Post(models.Model):
         return f"{self.title} posted on {self.date}"
     
     def get_absolute_url(self):
-        return reverse('posts_detail', kwargs={'post_id': self.id})
+        return reverse('posts_detail', kwargs={'pk': self.id})
     class Meta:
         ordering = ['-date']
 
@@ -49,7 +49,6 @@ class Comment(models.Model):
     text = models.TextField(max_length=1000)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_added = models.DateTimeField(auto_now_add=True)
-    likes = models.ManyToManyField(User, related_name='liked_comments', blank=True)
 
 
     def __str__(self):

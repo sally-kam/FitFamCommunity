@@ -56,52 +56,16 @@ class ProfileDetail(LoginRequiredMixin, ListView):
         # Return the profile of the currently logged-in user
         return self.request.user.profile
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        posts = user.posts.all()  # Retrieve all posts belonging to the user
+        context['posts'] = posts
+        context['comment_form'] = CommentForm()
+        return context
 
 
-    def add_photo(self, request, profile_id):
-        profile = get_object_or_404(Profile, id=profile_id)
-        photo_file = request.FILES.get('photo-file', None)
-        
-        if photo_file:
-            s3 = boto3.client('s3')
-            key = uuid.uuid4().hex[:6] + photo_file.name[photo_file.name.rfind('.'):]
-            
-            try:
-                bucket = os.environ['S3_BUCKET']
-                s3.upload_fileobj(photo_file, bucket, key)
-                url = f"{os.environ['S3_BASE_URL']}{bucket}/{key}"
-                
-                # Update the profile's photo
-                photo, created = Photo.objects.update_or_create(
-                    related_profile=profile,
-                    defaults={'image_url': url}
-                )
-                
-                # Optionally, you can delete the previous photo if needed
-                # if not created and photo.image_url != url:
-                #     s3.delete_object(Bucket=bucket, Key=photo.image_url.split('/')[-1])
-                
-            except Exception as e:
-                print('An error occurred uploading file to S3')
-                print(e)
-        
-        return redirect('profile_detail', profile_id=profile_id)
 
-# @login_required
-# # def posts_index(request):
-# #   posts = Post.objects.all()
-# #   msg = False
-    
-# #   if request.user.is_authenticated:
-# #         user = request.user
-        
-    
-# #         if post.likes.filter(id=user.id).exists():
-# #             msg = True
-
-# #   return render(request, 'posts/index.html', {
-# #         'posts': posts
-# #   })
 
 
 class PostList(LoginRequiredMixin, ListView):
@@ -177,41 +141,6 @@ class EditProfile(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-# class AddPhoto(LoginRequiredMixin, CreateView):
-#     model = Photo
-#     form_class = PhotoForm
-#     template_name = 'add_photo.html'
-#     success_url = reverse_lazy('profile_detail')
-
-#     def add_photo(request, user_id):
-#         photo_file = request.FILES.get('photo-file', None)
-#         if photo_file:
-#             s3 = boto3.client('s3')
-#             key = uuid.uuid4().hex[:6] + photo_file.name[photo_file.name.rfind('.'):]
-#             try:
-#                 bucket = os.environ['S3_BUCKET']
-#                 s3.upload_fileobj(photo_file, bucket, key)
-#                 url = f"{os.environ['S3_BASE_URL']}{bucket}/{key}"
-#                 Profile.objects.create(url = url, profile_id=profile_id)
-#             except Exception as e:
-#                 print('An error occurred uploading file to S3')
-#                 print(e)
-#         return redirect('profile_detail', profile_id=profile_id)
-
-# def add_photo(request, user_id):
-#         photo_file = request.FILES.get('photo-file', None)
-#         if photo_file:
-#             s3 = boto3.client('s3')
-#             key = uuid.uuid4().hex[:6] + photo_file.name[photo_file.name.rfind('.'):]
-#             try:
-#                 bucket = os.environ['S3_BUCKET']
-#                 s3.upload_fileobj(photo_file, bucket, key)
-#                 url = f"{os.environ['S3_BASE_URL']}{bucket}/{key}"
-#                 Profile.objects.create(url = url, profile_id=profile_id)
-#             except Exception as e:
-#                 print('An error occurred uploading file to S3')
-#                 print(e)
-#         return redirect('profile_detail', profile_id=profile_id)
 
 class EditSettings(LoginRequiredMixin, UpdateView):
   model = User
@@ -233,11 +162,6 @@ class EditPassword(LoginRequiredMixin, PasswordChangeView):
     success_url = reverse_lazy('profile_detail')
 
    
-# @login_required
-# def posts_detail(request, post_id):
-#   post = get_object_or_404(Post, id=post_id)
-#   form = CommentForm()
-#   return render(request, 'posts/detail.html', { 'post': post, 'form':form })
 
 class PostDetail(LoginRequiredMixin, DetailView):
     model = Post
@@ -299,6 +223,16 @@ def like_post2(request, pk):
 
     return redirect(reverse('posts_detail', kwargs={'pk': pk}))
 
+def like_post3(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+
+    if post.likes.filter(id=request.user.id).exists():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+
+    return redirect(reverse('profile_detail'))
+
 
 
 class CommentCreate(LoginRequiredMixin,CreateView):
@@ -327,6 +261,19 @@ class CommentCreate2(LoginRequiredMixin,CreateView):
    def get_success_url(self):
         return reverse_lazy('posts_detail', kwargs={'pk': self.kwargs['pk']})
    
+class CommentCreate3(LoginRequiredMixin,CreateView):
+   model = Comment
+   form_class = CommentForm
+
+
+   def form_valid(self, form):
+        form.instance.post_id = self.kwargs['pk']
+        form.instance.user = self.request.user  
+        return super().form_valid(form)
+
+   def get_success_url(self):
+        return reverse_lazy('profile_detail')
+   
 
 
 
@@ -340,6 +287,13 @@ class CommentDelete2(LoginRequiredMixin, DeleteView):
   def get_success_url(self):
         post_pk = self.kwargs['post_pk']  # retrieve the post pk from the URL
         return reverse('posts_detail', kwargs={'pk': post_pk})
+  
+class CommentDelete3(LoginRequiredMixin, DeleteView):
+  model = Comment
+
+  def get_success_url(self):
+        post_pk = self.kwargs['post_pk']  # retrieve the post pk from the URL
+        return reverse('profile_detail')
 
 
 # def unlike_post(request, pk):

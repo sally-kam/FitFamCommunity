@@ -1,20 +1,125 @@
 {% extends 'base.html' %}
-{% block content %}
+ {% block content %}
 <div class="card border-warning border border-4">
-    <div class="card-content">
-<h1 class="text-center">My Profile</h1>
-{{ profile.profile_pic }}
-{% if profile %}
+  <div class="card-content">
+    <h1 class="text-center">My Profile</h1>
+    {% if profile %}
+    <div class="row">
+      <div class="col-4">
+        <img
+          class="img-fluid p-0 rounded-circle"
+          src="{{ user.profile.profile_pic }}"
+          alt="Profile Picture"
+        />
+      </div>
+      <div class="col-8">
+        <h4> <span class="text-decoration-underline">Username:</span> {{ user.profile.user }}</h4>
+        <h4><span class="text-decoration-underline">Name:</span> {{ user.first_name }} {{ user.last_name }}</h4>
+        <h4><span class="text-decoration-underline">Email:</span> {{ user.email }}</h4>
+        <h4><span class="text-decoration-underline">Date of Birth:</span> {{ user.profile.date_of_birth }}</h4>
+        <h4><span class="text-decoration-underline">Bio:</span> {{ user.profile.bio }}</h4>
+      </div>
+    </div>
+   <h2 class="text-uppercase">My Posts</h2>  
 
-<img src="{{ user.profile.profile_pic }}" alt="Profile Picture">
-    <h3>Username: {{ user.profile.user }}</h3>
-    <h3>Name: {{ user.first_name }} {{ user.last_name }}</h3>
-    <h4>Email: {{ user.email }}</h4>
-    <h4>Date of Birth: {{ user.profile.date_of_birth }}</h4>
-    <h6>Bio: {{ user.profile.bio }}</h6>
-{% else %}
+        {% for post in posts %}
+   
+            <a href="{% url 'posts_detail' post.id %}" class="text-decoration-none">
+                <div class="card border-warning">
+                  <div class="card-content">
+                    <div class="row">
+                      <img class="col-1 img-fluid p-0 rounded-circle" src="{{ post.user.profile.profile_pic }}">
+                      <div class="col-11"><h5>{{post.user}}</h5>Posted on: {{ post.date }}</div>
+                    </div>
+                    <h3 class="card-title"><strong> {{ post.title }}</strong></h3>
+                    <p>{{ post.content|linebreaks }}</p>
+                  </a>  
+
+<!-- like/unlike post -->
+<div class="row">
+    <form action="{% url 'like_post3' post.pk %}" method="POST">
+      {% csrf_token %}
+      {% if post.liked %}
+      <button class="btn border-warning btn-warning" type="submit" name="post_id" value="{{ post.id }}">
+        💔
+      </button>
+      {% else %}
+      <button class="btn border-warning btn-warning" type="submit" name="post_id" value="{{ post.id }}">
+        ❤️
+      </button>
+      {% endif %}
+      {{ post.total_likes }}
+      <hr>
+    </form>
+    
+    <br>
+        <!-- Display Comment Form -->
+  
+        
+        <a class="btn toggle-comment-form border-warning btn-warning" data-post-id="{{ post.id }}">
+          💬
+        </a>
+  
+        <div id="comment-form-container-{{ post.id }}" style="display: none;">
+          <form method="POST" action="{% url 'comments_create3' post.pk %}">
+            {% csrf_token %}
+            <h8></h8>
+            {{ comment_form.as_p }}
+            <button class="btn border-warning btn-warning" type="submit">add comment</button>
+          </form>
+        </div>
+        <br>
+        <div class="card-content">
+          <h4>Comments...</h4>
+        {% if not post.comments.all %}
+          no comments yet...
+        {% else %}
+          {% for comment in post.comments.all %}
+          <div class="card border-warning p-2">
+            <div class="row">
+              <div class="col-10">
+                <div class="row">
+                  <img class="col-1 img-fluid rounded-circle" src="{{ comment.user.profile.profile_pic }}">
+                  <h4 class="col-11">{{comment.user}}</h4>
+                </div>
+                <h6>{{ comment.date_added }}</h6>
+                <p>{{ comment.text }}</p>
+              </div>
+              <div class="col-2 d-flex justify-content-end">
+                {% if user.is_authenticated and user == comment.user %}
+                <a href="{% url 'comments_delete3' post.id comment.id %}">
+                  <button type="button" class="close btn border-warning btn-warning" aria-label="Close">
+                    <span>X</span>
+                  </button>
+                </a>
+                {% endif %}
+              </div>
+            </div>
+            </div>
+          {% endfor %}
+        {% endif %}      
+        </div>
+  </div>
+
+
+        </div>
+    </div>
+        {% empty %}
+          <p>No posts found.</p>
+        {% endfor %}
+
+
+    {% else %}
     <p>No profile found.</p>
-{% endif %}
+    {% endif %}
+  </div>
 </div>
-</div>
-  {% endblock %}
+<script>
+    $(document).ready(function() {
+      $('.toggle-comment-form').click(function() {
+        var postId = $(this).data('post-id');
+        $('#comment-form-container-' + postId).toggle();
+      });
+      });
+      </script>
+{% endblock %}
