@@ -21,6 +21,7 @@ urlpatterns = [
     path('profile/edit_settings/<int:pk>/', views.EditSettings.as_view(), name='edit_settings'),
     path('profile/edit_password/<int:pk>/', views.EditPassword.as_view(), name='edit_password'),
     path('profile/edit/<int:pk>/', views.EditProfile.as_view(), name='edit_profile'),
+    # path('profile/add_photo/<int:user_id>/', views.add_photo, name='add_photo'),
     path('signup/', SignUp.as_view(), name='signup'),
     path('posts/<int:pk>/', views.PostDetail.as_view(), name='posts_detail'),
     path('resources/foodcaloriecounter', views.food_calorie_counter, name='food_calorie_counter'),

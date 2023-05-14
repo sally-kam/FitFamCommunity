@@ -14,7 +14,8 @@ class SignUpForm(UserCreationForm):
     last_name = forms.CharField(max_length=30, required=True, help_text='Required.')
     date_of_birth = forms.DateField(widget=DatePickerInput(), required=True)
     bio = forms.CharField(max_length=5000, required=True, widget=Textarea(attrs={'rows': 8, 'cols': 80}))
-
+    profile_pic = forms.ImageField(label='Profile Picture')
+    
     class Meta:
         model = User
         fields = [
@@ -63,3 +64,15 @@ class CommentForm(ModelForm):
         labels = {
             'text': 'Comment'
         }
+
+# class PhotoForm(forms.ModelForm):
+#     class Meta:
+#         model = Photo
+#         fields = ['url', 'profile']
+
+class EditProfileForm(forms.ModelForm):
+    profile_pic = forms.ImageField(label='Profile Picture')
+    class Meta:
+        model = Profile
+        fields = ['date_of_birth', 'bio', 'profile_pic']
+        

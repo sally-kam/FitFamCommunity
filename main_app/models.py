@@ -3,20 +3,28 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 from django.urls import reverse
-
+from storages.backends.s3boto3 import S3Boto3Storage
 
 
 # Create your models here.
+# class Photo(models.Model):
+#     url = models.CharField(max_length=200)
+#     profile = models.OneToOneField('main_app.Profile', on_delete=models.CASCADE, related_name='profile_photo')
 
+#     def __str__(self):
+#         return f"Photo for profile_id: {self.profile_id} @{self.url}"
+    
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     date_of_birth = models.DateField(blank=True, null=True)
     bio = models.TextField(max_length=1000, blank=True)
+    profile_pic = models.CharField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user} "
-    
-    
+        return f"{self.user}"
+
+
+
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField(max_length=1000)
@@ -52,3 +60,4 @@ class Comment(models.Model):
     
     class Meta:
         ordering = ['-date_added']
+

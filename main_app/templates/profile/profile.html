@@ -3,7 +3,10 @@
 <div class="card border-warning border border-4">
     <div class="card-content">
 <h1 class="text-center">My Profile</h1>
+{{ profile.profile_pic }}
 {% if profile %}
+
+<img src="{{ user.profile.profile_pic }}" alt="Profile Picture">
     <h3>Username: {{ user.profile.user }}</h3>
     <h3>Name: {{ user.first_name }} {{ user.last_name }}</h3>
     <h4>Email: {{ user.email }}</h4>

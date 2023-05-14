@@ -10,12 +10,15 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import SignUpForm, PostForm, CommentForm
+from .forms import SignUpForm, PostForm, CommentForm, EditProfileForm
 from .models import Profile, Comment
 from django.urls import reverse_lazy, reverse
 from django.http import HttpResponseRedirect
 import requests
 import json
+import uuid
+import boto3
+import os
 # Create your views here.
 # iDY/ohuCxpLGD4yb3YtGVA==1LV8KxQR4T6PSsMs
 # Define the home view
@@ -49,9 +52,40 @@ class ProfileDetail(LoginRequiredMixin, ListView):
     template_name = 'profile/profile.html'
     context_object_name = 'profile'
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.filter(user=self.request.user)
+    def get_object(self, queryset=None):
+        # Return the profile of the currently logged-in user
+        return self.request.user.profile
+
+
+
+    def add_photo(self, request, profile_id):
+        profile = get_object_or_404(Profile, id=profile_id)
+        photo_file = request.FILES.get('photo-file', None)
+        
+        if photo_file:
+            s3 = boto3.client('s3')
+            key = uuid.uuid4().hex[:6] + photo_file.name[photo_file.name.rfind('.'):]
+            
+            try:
+                bucket = os.environ['S3_BUCKET']
+                s3.upload_fileobj(photo_file, bucket, key)
+                url = f"{os.environ['S3_BASE_URL']}{bucket}/{key}"
+                
+                # Update the profile's photo
+                photo, created = Photo.objects.update_or_create(
+                    related_profile=profile,
+                    defaults={'image_url': url}
+                )
+                
+                # Optionally, you can delete the previous photo if needed
+                # if not created and photo.image_url != url:
+                #     s3.delete_object(Bucket=bucket, Key=photo.image_url.split('/')[-1])
+                
+            except Exception as e:
+                print('An error occurred uploading file to S3')
+                print(e)
+        
+        return redirect('profile_detail', profile_id=profile_id)
 
 # @login_required
 # # def posts_index(request):
@@ -113,10 +147,71 @@ class SignUp(generic.CreateView):
 
 
 class EditProfile(LoginRequiredMixin, UpdateView):
-  model = Profile
-  template_name = 'registration/edit_profile.html'
-  fields = ['bio', 'date_of_birth']
-  success_url = reverse_lazy('profile_detail')
+    model = Profile
+    template_name = 'registration/edit_profile.html'
+    form_class = EditProfileForm
+    success_url = reverse_lazy('profile_detail')
+
+    def form_valid(self, form):
+        # Get the profile instance
+        profile = form.instance
+
+        # Handle file upload and storage logic here
+        profile_pic = self.request.FILES.get('profile_pic', None)
+        if profile_pic:
+            s3 = boto3.client('s3')
+            # Generate a unique key for the file
+            key = uuid.uuid4().hex[:6] + profile_pic.name[profile_pic.name.rfind('.'):]
+            try:
+                bucket = os.environ['S3_BUCKET']
+                s3.upload_fileobj(profile_pic, bucket, key)
+                # Build the full URL for the uploaded file
+                url = f"{os.environ['S3_BASE_URL']}{bucket}/{key}"
+                # Assign the URL to the profile_pic field
+                profile.profile_pic = url
+            except Exception as e:
+                print('An error occurred uploading file to AWS S3')
+                print(e)
+
+        # Save the profile instance
+        return super().form_valid(form)
+
+
+# class AddPhoto(LoginRequiredMixin, CreateView):
+#     model = Photo
+#     form_class = PhotoForm
+#     template_name = 'add_photo.html'
+#     success_url = reverse_lazy('profile_detail')
+
+#     def add_photo(request, user_id):
+#         photo_file = request.FILES.get('photo-file', None)
+#         if photo_file:
+#             s3 = boto3.client('s3')
+#             key = uuid.uuid4().hex[:6] + photo_file.name[photo_file.name.rfind('.'):]
+#             try:
+#                 bucket = os.environ['S3_BUCKET']
+#                 s3.upload_fileobj(photo_file, bucket, key)
+#                 url = f"{os.environ['S3_BASE_URL']}{bucket}/{key}"
+#                 Profile.objects.create(url = url, profile_id=profile_id)
+#             except Exception as e:
+#                 print('An error occurred uploading file to S3')
+#                 print(e)
+#         return redirect('profile_detail', profile_id=profile_id)
+
+# def add_photo(request, user_id):
+#         photo_file = request.FILES.get('photo-file', None)
+#         if photo_file:
+#             s3 = boto3.client('s3')
+#             key = uuid.uuid4().hex[:6] + photo_file.name[photo_file.name.rfind('.'):]
+#             try:
+#                 bucket = os.environ['S3_BUCKET']
+#                 s3.upload_fileobj(photo_file, bucket, key)
+#                 url = f"{os.environ['S3_BASE_URL']}{bucket}/{key}"
+#                 Profile.objects.create(url = url, profile_id=profile_id)
+#             except Exception as e:
+#                 print('An error occurred uploading file to S3')
+#                 print(e)
+#         return redirect('profile_detail', profile_id=profile_id)
 
 class EditSettings(LoginRequiredMixin, UpdateView):
   model = User
