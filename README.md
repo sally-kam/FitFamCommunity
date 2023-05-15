@@ -2,6 +2,8 @@
   
 <img src="https://i.imgur.com/kdicZUs.jpg" /></a>
 
+### Built by: **[Sally Kam](https://www.linkedin.com/in/sallykam/)**
+
 ## Description:
 ### Welcome to HealthHive! This is a social network that focuses on promoting overall health and wellness, such as healthy eating, exercise, and mental health. This could allow users to connect with others who share their interest in living a healthy lifestyle, share tips and advice, and support each other in achieving their goals.
 
@@ -29,7 +31,7 @@
 
 ## Getting Started
 
-#### [Live Website](https://healthhive.herokuapp.com/)
+### [Live Website](https://healthhive.herokuapp.com/)
 
 [Trello](https://trello.com/invite/b/br4FXLB1/ATTI134ec3556bd3adf1fa65e5d94f04fa3e7ADED45F/project-4)
 
