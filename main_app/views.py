@@ -137,18 +137,16 @@ class EditProfile(LoginRequiredMixin, UpdateView):
         # Save the profile instance
         return super().form_valid(form)
 
-
-
 class EditSettings(LoginRequiredMixin, UpdateView):
   model = User
   template_name = 'registration/edit_settings.html'
   fields = ['username', 'first_name', 'last_name', 'email']
   success_url = reverse_lazy('profile_detail') 
 
-def get_object(self, queryset=None):
+  def get_object(self, queryset=None):
         return self.request.user
 
-def form_valid(self, form):
+  def form_valid(self, form):
         response = super().form_valid(form)
         # Perform any additional processing or redirect logic
         return response
@@ -157,8 +155,6 @@ class EditPassword(LoginRequiredMixin, PasswordChangeView):
     form_class = PasswordChangeForm
     template_name = 'registration/edit_password.html'
     success_url = reverse_lazy('profile_detail')
-
-   
 
 class PostDetail(LoginRequiredMixin, DetailView):
     model = Post
@@ -175,9 +171,6 @@ class PostDetail(LoginRequiredMixin, DetailView):
         context['liked'] = post.likes.filter(id=user.id).exists()
 
         return context
-
-
-
 
 class PostCreate(LoginRequiredMixin, CreateView):
     model = Post
@@ -220,6 +213,7 @@ def like_post2(request, pk):
 
     return redirect(reverse('posts_detail', kwargs={'pk': pk}))
 
+@login_required
 def like_post3(request, pk):
     post = get_object_or_404(Post, pk=pk)
 
@@ -229,8 +223,6 @@ def like_post3(request, pk):
         post.likes.add(request.user)
 
     return redirect(reverse('profile_detail'))
-
-
 
 class CommentCreate(LoginRequiredMixin,CreateView):
    model = Comment
@@ -271,9 +263,6 @@ class CommentCreate3(LoginRequiredMixin,CreateView):
    def get_success_url(self):
         return reverse_lazy('profile_detail')
    
-
-
-
 class CommentDelete(LoginRequiredMixin, DeleteView):
   model = Comment
   success_url = reverse_lazy('posts_index')
@@ -293,10 +282,3 @@ class CommentDelete3(LoginRequiredMixin, DeleteView):
         return reverse('profile_detail')
 
 
-# def unlike_post(request, pk):
-#    post = get_object_or_404(Post, pk=pk)
-#    post.likes.remove(request.user)
-#    return redirect('post_detail', pk=pk)
-# class CommentUpdate(LoginRequiredMixin, UpdateView):
-#   model = Comment
-#   form_class = CommentForm

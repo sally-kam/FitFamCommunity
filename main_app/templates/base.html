@@ -21,7 +21,7 @@
     
     <title>Health Hive</title>
 </head>
-<body style="background-color: #f6f5f3; font-family: 'Livvic', sans-serif;">
+<body style="font-family: 'Livvic', sans-serif; background-image: url('{% static 'images/background.jpg'%}');">
   <nav class="navbar navbar-fixed-top navbar-expand-lg navbar-right p-0 text-center" style="background-color: #ffaa42; z-index:9999; height:5.2rem">
     <div class="container-fluid">
       <a class="navbar-brand text-white" href="{% url 'home' %}">
@@ -40,6 +40,7 @@
             <a class="nav-link active text-white" aria-current="page" href="{% url 'about' %}">About</a>
           </li>
           {% if user.is_authenticated %}
+          
           <li class="nav-item text-white">
             <a class="nav-link text-white" href="{% url 'posts_index' %}">NewsFeed</a>
           </li>
@@ -54,7 +55,7 @@
             <ul class="dropdown-menu border-warning text-center" aria-labelledby="dropdownMenuButton">
               <li><a class="dropdown-item border-warning text-center justify-content-center" href="{% url 'profile_detail' %}">My Profile</a></li>
               <li><a class="dropdown-item border-warning text-center justify-content-center" href="{% url 'edit_profile' user.profile.id %}">Edit Profile</a></li>
-              <li><a class="dropdown-item border-warning text-center justify-content-center" href="{% url 'edit_settings' user.profile.id %}">Edit Settings</a></li>
+              <li><a class="dropdown-item border-warning text-center justify-content-center" href="{% url 'edit_settings' user.id %}">Edit Settings</a></li>
               <li><a class="dropdown-item border-warning text-center justify-content-center" href="{% url 'edit_password' user.profile.id %}">Change Password</a></li>
             </ul>
           </li>
