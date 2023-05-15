@@ -6,11 +6,12 @@
     {% if profile %}
     <div class="row">
       <div class="col-4">
-        <img
-          class="img-fluid p-0 rounded-circle"
-          src="{{ user.profile.profile_pic }}"
-          alt="Profile Picture"
-        />
+
+        {% if user.profile.profile_pic %}
+      <img class="img-fluid p-0 rounded-circle" src="{{ user.profile.profile_pic }}" />
+        {% else %}
+        <img class="img-fluid p-0 rounded-circle" src="https://i.imgur.com/0oOCcAn.png" />
+        {% endif %}
       </div>
       <div class="col-8">
         <h4> <span class="text-decoration-underline">Username:</span> {{ user.profile.user }}</h4>
@@ -28,7 +29,11 @@
                 <div class="card border-warning">
                   <div class="card-content">
                     <div class="row">
-                      <img class="col-1 img-fluid p-0 rounded-circle" src="{{ post.user.profile.profile_pic }}">
+                      {% if post.user.profile.profile_pic %}
+                      <img class="col-1 img-fluid p-0 rounded-circle border border-2 border-warning" src="{{ post.user.profile.profile_pic }}" />
+                        {% else %}
+                        <img class="col-1 img-fluid p-0 rounded-circle border border-2 border-warning" src="https://i.imgur.com/0oOCcAn.png" />
+                        {% endif %}
                       <div class="col-11"><h5>{{post.user}}</h5>Posted on: {{ post.date }}</div>
                     </div>
                     <h3 class="card-title"><strong> {{ post.title }}</strong></h3>
@@ -76,10 +81,14 @@
         {% else %}
           {% for comment in post.comments.all %}
           <div class="card border-warning p-2">
-            <div class="row">
+            <div class="card-content row">
               <div class="col-10">
                 <div class="row">
-                  <img class="col-1 img-fluid rounded-circle" src="{{ comment.user.profile.profile_pic }}">
+                  {% if comment.user.profile.profile_pic %}
+                  <img class="col-1 img-fluid p-0 rounded-circle border border-2 border-warning" src="{{ comment.user.profile.profile_pic }}" />
+                    {% else %}
+                    <img class="col-1 img-fluid p-0 rounded-circle border border-2 border-warning" src="https://i.imgur.com/0oOCcAn.png" />
+                    {% endif %}
                   <h4 class="col-11">{{comment.user}}</h4>
                 </div>
                 <h6>{{ comment.date_added }}</h6>

@@ -7,7 +7,11 @@
         <div class="col-11">
 
           <div class="row">
-            <img class="col-2 img-fluid p-0 rounded-circle" src="{{ post.user.profile.profile_pic }}">
+            {% if post.user.profile.profile_pic %}
+            <img class="col-1 img-fluid p-0 rounded-circle border border-2 border-warning" src="{{ post.user.profile.profile_pic }}" />
+              {% else %}
+              <img class="col-1 img-fluid p-0 rounded-circle border border-2 border-warning" src="https://i.imgur.com/0oOCcAn.png" />
+              {% endif %}
             <div class="col-10"><h5>{{post.user}}</h5>Posted on:{{ post.date }}</div>
           </div>
 
@@ -63,10 +67,14 @@
       {% else %}
         {% for comment in post.comments.all %}
         <div class="card border-warning p-2">
-          <div class="row">
+          <div class="card-content row">
             <div class="col-10">
               <div class="row">
-                <img class="col-1 img-fluid rounded-circle" src="{{ comment.user.profile.profile_pic }}">
+                {% if comment.user.profile.profile_pic %}
+                <img class="col-1 img-fluid p-0 rounded-circle border border-2 border-warning" src="{{ comment.user.profile.profile_pic }}" />
+                  {% else %}
+                  <img class="col-1 img-fluid p-0 rounded-circle border border-2 border-warning" src="https://i.imgur.com/0oOCcAn.png" />
+                  {% endif %}
                 <div class="col-11"><h5>{{comment.user}}</h5>{{ comment.date_added }}</div>
               </div>
               <p></p>

@@ -14,7 +14,6 @@ class SignUpForm(UserCreationForm):
     last_name = forms.CharField(max_length=30, required=True, help_text='Required.')
     date_of_birth = forms.DateField(widget=DatePickerInput(format='%Y-%m-%d', attrs={'style': 'width: 200px;'}), required=True)
     bio = forms.CharField(max_length=5000, widget=Textarea(attrs={'rows': 8, 'cols': 80}))
-    profile_pic = forms.ImageField(label='Profile Picture', required=False)
     
     class Meta:
         model = User
