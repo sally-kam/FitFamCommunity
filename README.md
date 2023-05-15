@@ -5,6 +5,8 @@
 ## Description:
 ### Welcome to HealthHive! This is a social network that focuses on promoting overall health and wellness, such as healthy eating, exercise, and mental health. This could allow users to connect with others who share their interest in living a healthy lifestyle, share tips and advice, and support each other in achieving their goals.
 
+---
+
 ## Technologies Used:
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
 ![Maintainer](https://img.shields.io/badge/Maintainer-sally-blue)
@@ -23,6 +25,7 @@
 ![Amazon AWS](https://img.shields.io/badge/Amazon_AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
 ![Material UI](https://img.shields.io/badge/Material%20UI-007FFF?style=for-the-badge&logo=mui&logoColor=white)
 
+---
 
 ## Getting Started
 
@@ -33,6 +36,8 @@
 [Wireframe](https://whimsical.com/project-4-2CM5XwL2PLJfumZ8JwXdJB)
 
 [ERD](https://lucid.app/lucidchart/b32445e6-5f6d-43d4-9d86-83365abf2818/edit?viewport_loc=-329%2C151%2C1749%2C1132%2C8xoI5DGM9R4X&invitationId=inv_ea543f2e-a084-4569-8eb6-a0d98118b0b5)
+
+</div>
 
 #### NewsFeed Page
 <p>
@@ -50,6 +55,8 @@
   The <strong>"My Profile"</strong> page showcases the user's information, including their profile picture, username, name, email, date of birth, and bio. It also displays the user's posts, with details such as the author, date, title, and content. Users can like/unlike posts, add comments, and view existing comments. The page includes a toggle feature to show/hide the comment form for each post.
 </p>
 <img src="https://i.imgur.com/ZBYzwzc.png" /></a>
+
+---
 
 ## Interesting Code
 
@@ -94,6 +101,8 @@ class EditProfile(LoginRequiredMixin, UpdateView):
         # Save the profile instance
         return super().form_valid(form)
 ```
+
+---
 
 ## Next Steps:
 - Enhance the post creation process by allowing users to upload images along with their posts. This feature enables users to visually enhance their content and share images related to their posts, providing a more engaging and dynamic experience.
