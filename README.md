@@ -107,12 +107,8 @@ class EditProfile(LoginRequiredMixin, UpdateView):
 ---
 
 ## Next Steps:
-- Enhance the post creation process by allowing users to upload images along with their posts. This feature enables users to visually enhance their content and share images related to their posts, providing a more engaging and dynamic experience.
-
-- Implement a user profile search feature that allows users to search for other users' profiles. This feature facilitates easy discovery and connection with other users on the platform, promoting interaction and networking within the community.
-
-- Enrich user profiles by including social media links. Users can provide links to their social media profiles such as Facebook, Twitter, Instagram, or LinkedIn. This addition allows other users to explore and connect with them across different social platforms, expanding their online presence and fostering a sense of community.
-
-- Enable user following functionality to enhance user engagement and connectivity. Users can choose to follow other users, receiving updates on their activities and posts. This feature facilitates networking, collaboration, and the formation of connections within the platform, creating a vibrant and interactive user community.
-
-- Implement a feature to allow users to like comments. By adding a "like" functionality to comments, users can express their appreciation or agreement with specific comments. This feature promotes user engagement and interaction, as well as provides a means for users to acknowledge valuable contributions made by others within the community.
+- Image uploads for posts: Enhance posts with images, making them more engaging.
+- User profile search: Find other users' profiles easily for connections.
+- Social media links in profiles: Share social media profiles for expanded online presence.
+- User following: Follow other users for updates and connections.
+- Comment likes: Like comments to show appreciation and engagement.
