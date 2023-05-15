@@ -19,7 +19,7 @@ import uuid
 import boto3
 import os
 # Create your views here.
-# iDY/ohuCxpLGD4yb3YtGVA==1LV8KxQR4T6PSsMs
+
 # Define the home view
 def home(request):
   # Include an .html file extension - unlike when rendering EJS templates
@@ -33,7 +33,8 @@ def food_calorie_counter(request):
     if request.method == 'POST':
         query = request.POST['query']
         api_url = 'https://api.api-ninjas.com/v1/nutrition?query='
-        api_request = requests.get(api_url + query, headers={'X-Api-Key': 'iDY/ohuCxpLGD4yb3YtGVA==1LV8KxQR4T6PSsMs'})
+        api_key = os.environ['API_KEY']
+        api_request = requests.get(api_url + query, headers={'X-Api-Key': api_key})
         try:
             food = json.loads(api_request.content)
             print(api_request.content)
